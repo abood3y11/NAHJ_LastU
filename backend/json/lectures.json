@@ -1,0 +1,145 @@
+{
+  "lectures": [
+    {
+      "id": "L1",
+      "courseId": "CS401",
+      "title": "Introduction to Machine Learning",
+      "description": "Overview of machine learning concepts and applications",
+      "lectureNumber": "1",
+      "date": "Apr 20, 2025",
+      "time": "09:00 - 10:30 AM",
+      "room": "301",
+      "status": "completed",
+      "attendees": 45,
+      "materials": [
+        {
+          "type": "slides",
+          "url": "lecture1_slides.pdf"
+        },
+        {
+          "type": "code",
+          "url": "example1.ipynb"
+        }
+      ]
+    },
+    {
+      "id": "L2",
+      "courseId": "CS401",
+      "title": "Supervised Learning Fundamentals",
+      "description": "Deep dive into supervised learning algorithms",
+      "lectureNumber": "2",
+      "date": "Apr 22, 2025",
+      "time": "09:00 - 10:30 AM",
+      "room": "301",
+      "status": "upcoming",
+      "attendees": 42,
+      "materials": [
+        {
+          "type": "slides",
+          "url": "lecture2_slides.pdf"
+        }
+      ]
+    },
+    {
+      "id": "L3",
+      "courseId": "CS401",
+      "title": "Neural Networks Architecture",
+      "description": "Understanding neural network components and design",
+      "lectureNumber": "3",
+      "date": "Apr 24, 2025",
+      "time": "09:00 - 10:30 AM",
+      "room": "301",
+      "status": "upcoming",
+      "attendees": 44,
+      "materials": []
+    },
+    {
+      "id": "L4",
+      "courseId": "CS402",
+      "title": "Deep Learning Basics",
+      "description": "Introduction to deep learning principles",
+      "lectureNumber": "1",
+      "date": "Apr 21, 2025",
+      "time": "14:00 - 15:30 PM",
+      "room": "205",
+      "status": "completed",
+      "attendees": 38,
+      "materials": [
+        {
+          "type": "slides",
+          "url": "dl_basics.pdf"
+        }
+      ]
+    },
+    {
+      "id": "L5",
+      "courseId": "CS402",
+      "title": "Convolutional Neural Networks",
+      "description": "Understanding CNN architectures and applications",
+      "lectureNumber": "2",
+      "date": "Apr 23, 2025",
+      "time": "14:00 - 15:30 PM",
+      "room": "205",
+      "status": "upcoming",
+      "attendees": 36,
+      "materials": []
+    },
+    {
+      "id": "L6",
+      "courseId": "CS402",
+      "title": "Recurrent Neural Networks",
+      "description": "Deep dive into RNN architectures",
+      "lectureNumber": "3",
+      "date": "Apr 25, 2025",
+      "time": "14:00 - 15:30 PM",
+      "room": "205",
+      "status": "upcoming",
+      "attendees": 0,
+      "materials": []
+    },
+    {
+      "id": "L7",
+      "courseId": "CS403",
+      "title": "Neural Network Fundamentals",
+      "description": "Basic concepts and mathematics of neural networks",
+      "lectureNumber": "1",
+      "date": "Apr 21, 2025",
+      "time": "11:00 - 12:30 PM",
+      "room": "401",
+      "status": "completed",
+      "attendees": 52,
+      "materials": [
+        {
+          "type": "slides",
+          "url": "nn_fundamentals.pdf"
+        }
+      ]
+    },
+    {
+      "id": "L8",
+      "courseId": "CS403",
+      "title": "Backpropagation Deep Dive",
+      "description": "Detailed exploration of backpropagation algorithm",
+      "lectureNumber": "2",
+      "date": "Apr 23, 2025",
+      "time": "11:00 - 12:30 PM",
+      "room": "401",
+      "status": "upcoming",
+      "attendees": 50,
+      "materials": []
+    },
+    {
+      "id": "L9",
+      "courseId": "CS403",
+      "title": "Advanced Optimization Techniques",
+      "description": "Modern optimization methods for neural networks",
+      "lectureNumber": "3",
+      "date": "Apr 25, 2025",
+      "time": "11:00 - 12:30 PM",
+      "room": "401",
+      "status": "upcoming",
+      "attendees": 0,
+      "materials": []
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "courseStats": [
+    {
+      "courseId": "CS401",
+      "totalStudents": 45,
+      "averageGrade": 88.5,
+      "completionRate": 75,
+      "studentEngagement": 92,
+      "monthlyProgress": [
+        {"month": "Jan", "attendance": 42, "performance": 85},
+        {"month": "Feb", "attendance": 44, "performance": 87},
+        {"month": "Mar", "attendance": 45, "performance": 90},
+        {"month": "Apr", "attendance": 43, "performance": 88},
+        {"month": "May", "attendance": 45, "performance": 92}
+      ]
+    }
+  ],
+  "studentStats": [
+    {
+      "studentId": "2",
+      "courses": [
+        {
+          "courseId": "CS401",
+          "attendance": 90,
+          "tasksCompleted": 85,
+          "averageGrade": 88
+        }
+      ],
+      "monthlyStudyHours": [
+        {"month": "Jan", "study": 45, "test": 25},
+        {"month": "Feb", "study": 38, "test": 22},
+        {"month": "Mar", "study": 52, "test": 18},
+        {"month": "Apr", "study": 42, "test": 30},
+        {"month": "May", "study": 28, "test": 15}
+      ]
+    }
+  ]
+}

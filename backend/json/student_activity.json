@@ -1,0 +1,77 @@
+{
+  "student_activities": [
+    {
+      "student_id": "101",
+      "name": "Emma Thompson",
+      "total_hours": 156.5,
+      "current_week_hours": 28.5,
+      "daily_breakdown": [
+        {
+          "date": "2025-04-20",
+          "hours": 5.5,
+          "sessions": [
+            {
+              "start_time": "09:00:00",
+              "end_time": "11:30:00",
+              "duration": 2.5,
+              "activity_type": "lecture"
+            },
+            {
+              "start_time": "14:00:00",
+              "end_time": "17:00:00",
+              "duration": 3.0,
+              "activity_type": "self_study"
+            }
+          ]
+        }
+      ],
+      "weekly_stats": [
+        {
+          "week": "2025-W16",
+          "total_hours": 28.5,
+          "breakdown": {
+            "lectures": 12.5,
+            "self_study": 10.0,
+            "assignments": 6.0
+          }
+        }
+      ],
+      "monthly_summary": [
+        {
+          "month": "April 2025",
+          "total_hours": 98.5,
+          "average_daily_hours": 5.2,
+          "most_active_day": "Wednesday",
+          "peak_activity_time": "10:00:00"
+        }
+      ],
+      "activity_metrics": {
+        "course_engagement": 85,
+        "assignment_completion": 92,
+        "attendance_rate": 95,
+        "participation_score": 88
+      }
+    }
+  ],
+  "portal_statistics": {
+    "total_active_users": 1250,
+    "average_daily_users": 850,
+    "peak_usage_times": [
+      {
+        "day": "Monday",
+        "time": "10:00:00",
+        "user_count": 750
+      },
+      {
+        "day": "Wednesday",
+        "time": "14:00:00",
+        "user_count": 680
+      }
+    ],
+    "usage_by_device": {
+      "desktop": 65,
+      "mobile": 25,
+      "tablet": 10
+    }
+  }
+}

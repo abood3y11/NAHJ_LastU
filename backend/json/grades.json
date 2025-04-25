@@ -1,0 +1,484 @@
+{
+  "grades": [
+    {
+      "id": "1",
+      "studentId": "101",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 92,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 88,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 85,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 90,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A",
+      "progress": 85,
+      "trend": "up"
+    },
+    {
+      "id": "2",
+      "studentId": "102",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 95,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 98,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 96,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 94,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A+",
+      "progress": 96,
+      "trend": "up"
+    },
+    {
+      "id": "3",
+      "studentId": "103",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 78,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 82,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 75,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 80,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "B",
+      "progress": 79,
+      "trend": "up"
+    },
+    {
+      "id": "4",
+      "studentId": "104",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 65,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 70,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 68,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 72,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "C+",
+      "progress": 69,
+      "trend": "up"
+    },
+    {
+      "id": "5",
+      "studentId": "105",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 88,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 92,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 85,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 90,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A-",
+      "progress": 88,
+      "trend": "stable"
+    },
+    {
+      "id": "6",
+      "studentId": "106",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 95,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 93,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 97,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 96,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A+",
+      "progress": 96,
+      "trend": "stable"
+    },
+    {
+      "id": "7",
+      "studentId": "107",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 72,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 68,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 65,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 70,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "C",
+      "progress": 68,
+      "trend": "up"
+    },
+    {
+      "id": "8",
+      "studentId": "108",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 85,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 82,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 88,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 84,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "B+",
+      "progress": 85,
+      "trend": "stable"
+    },
+    {
+      "id": "9",
+      "studentId": "109",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 90,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 94,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 92,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 95,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A",
+      "progress": 93,
+      "trend": "up"
+    },
+    {
+      "id": "10",
+      "studentId": "110",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 60,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 55,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 58,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 62,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "D",
+      "progress": 59,
+      "trend": "up"
+    },
+    {
+      "id": "11",
+      "studentId": "111",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 98,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 99,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 100,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 98,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A+",
+      "progress": 99,
+      "trend": "stable"
+    },
+    {
+      "id": "12",
+      "studentId": "112",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 77,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 81,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 79,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 83,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "B",
+      "progress": 80,
+      "trend": "up"
+    },
+    {
+      "id": "13",
+      "studentId": "113",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 89,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 91,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 87,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 92,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A-",
+      "progress": 89,
+      "trend": "up"
+    },
+    {
+      "id": "14",
+      "studentId": "114",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 93,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 95,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 94,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 96,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "A",
+      "progress": 95,
+      "trend": "stable"
+    },
+    {
+      "id": "15",
+      "studentId": "115",
+      "courseId": "CS401",
+      "assignments": [
+        {
+          "title": "Assignment 1",
+          "score": 50,
+          "maxScore": 100,
+          "weight": 0.2
+        },
+        {
+          "title": "Assignment 2",
+          "score": 45,
+          "maxScore": 100,
+          "weight": 0.2
+        }
+      ],
+      "midterm": {
+        "score": 55,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "final": {
+        "score": 60,
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "overall": "F",
+      "progress": 53,
+      "trend": "up"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Math244 Homework",
+      "courseId": "CS401",
+      "subject": "Mathematics",
+      "startTime": "01:00 PM",
+      "endTime": "02:00 PM",
+      "dueDate": "2025-04-25",
+      "description": "Complete exercises 1-5 from Chapter 3",
+      "type": "homework",
+      "status": "pending",
+      "completed": false
+    },
+    {
+      "id": "2",
+      "title": "Quiz on calculator algebra",
+      "courseId": "CS401",
+      "subject": "Mathematics",
+      "startTime": "03:00 PM",
+      "endTime": "03:30 PM",
+      "dueDate": "2025-04-26",
+      "description": "Online quiz covering Chapter 2",
+      "type": "quiz",
+      "status": "pending",
+      "completed": false
+    },
+    {
+      "id": "3",
+      "title": "Midterm Math116",
+      "courseId": "CS402",
+      "subject": "Mathematics",
+      "startTime": "01:00 PM",
+      "endTime": "03:00 PM",
+      "dueDate": "2025-04-28",
+      "description": "Midterm examination covering Chapters 1-4",
+      "type": "exam",
+      "status": "pending",
+      "completed": false
+    }
+  ]
+}

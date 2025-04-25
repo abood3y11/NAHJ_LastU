@@ -1,0 +1,73 @@
+{
+  "courses": [
+    {
+      "id": "CS401",
+      "name": "Advanced Machine Learning",
+      "code": "CS401",
+      "professor": "Prof. Ahmed Ahmed",
+      "schedule": "Mon, Wed 10:00 AM - 11:30 AM",
+      "room": "301",
+      "status": "active",
+      "progress": 75,
+      "students": 45,
+      "lectures": 12,
+      "description": "Deep dive into advanced machine learning concepts and applications",
+      "prerequisites": ["Basic Programming", "Algorithms Fundamentals"],
+      "objectives": [
+        "Master ML algorithms",
+        "Implement neural networks",
+        "Process and analyze data",
+        "Build ML models"
+      ],
+      "duration": "16 weeks",
+      "credits": 4,
+      "image": "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
+    },
+    {
+      "id": "CS402",
+      "name": "Deep Learning Fundamentals",
+      "code": "CS402",
+      "professor": "Prof. Ahmed Ahmed",
+      "schedule": "Tue, Thu 2:00 PM - 3:30 PM",
+      "room": "205",
+      "status": "active",
+      "progress": 60,
+      "students": 38,
+      "lectures": 15,
+      "description": "Introduction to deep learning architectures and implementations",
+      "prerequisites": ["Machine Learning Basics", "Python Programming"],
+      "objectives": [
+        "Understand deep learning concepts",
+        "Build neural networks",
+        "Train models effectively",
+        "Implement real-world applications"
+      ],
+      "duration": "14 weeks",
+      "credits": 4,
+      "image": "https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg"
+    },
+    {
+      "id": "CS403",
+      "name": "Neural Networks",
+      "code": "CS403",
+      "professor": "Prof. Ahmed Ahmed",
+      "schedule": "Mon, Wed, Fri 1:00 PM - 2:30 PM",
+      "room": "401",
+      "status": "active",
+      "progress": 85,
+      "students": 52,
+      "lectures": 10,
+      "description": "Comprehensive study of neural network architectures",
+      "prerequisites": ["Deep Learning Fundamentals", "Advanced Mathematics"],
+      "objectives": [
+        "Design neural architectures",
+        "Optimize network performance",
+        "Implement advanced models",
+        "Solve complex problems"
+      ],
+      "duration": "12 weeks",
+      "credits": 3,
+      "image": "https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg"
+    }
+  ]
+}

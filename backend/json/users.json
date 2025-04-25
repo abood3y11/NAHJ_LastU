@@ -1,0 +1,42 @@
+{
+  "teachers": [
+    {
+      "id": "1",
+      "name": "Prof. Ahmed Ahmed",
+      "email": "ahmed.ahmed@edu.com",
+      "avatar": "https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg",
+      "department": "Mathematics Department",
+      "role": "teacher",
+      "courses": ["CS401", "CS402", "CS403"]
+    }
+  ],
+  "students": [
+    {
+      "id": "2",
+      "name": "Sara Ahmed",
+      "email": "sara.ahmed@edu.com",
+      "avatar": "https://cdn-icons-png.freepik.com/256/15675/15675890.png",
+      "department": "Mathematics Department",
+      "role": "student",
+      "enrolledCourses": ["CS401", "CS402"]
+    },
+    {
+      "id": "3",
+      "name": "Emma Thompson",
+      "email": "emma.t@edu.com",
+      "avatar": "https://images.pexels.com/photos/3777943/pexels-photo-3777943.jpeg",
+      "department": "Computer Science",
+      "role": "student",
+      "enrolledCourses": ["CS401", "CS403"]
+    },
+    {
+      "id": "4",
+      "name": "James Wilson",
+      "email": "james.w@edu.com",
+      "avatar": "https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg",
+      "department": "Computer Science",
+      "role": "student",
+      "enrolledCourses": ["CS402", "CS403"]
+    }
+  ]
+}
