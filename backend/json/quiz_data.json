@@ -1,0 +1,91 @@
+{
+  "questions": {
+    "L1": [
+      {
+        "id": "Q1",
+        "question": "What are the key differences between supervised and unsupervised learning in machine learning?",
+        "modelAnswer": "Supervised learning involves training models with labeled data where the desired output is known, while unsupervised learning works with unlabeled data to find patterns and structures. Supervised learning is used for tasks like classification and regression, whereas unsupervised learning is used for clustering and dimensionality reduction.",
+        "points": [
+          "Clear distinction between supervised and unsupervised",
+          "Mention of labeled vs unlabeled data",
+          "Examples of applications for each type",
+          "Understanding of core concepts"
+        ]
+      }
+    ],
+    "L4": [
+      {
+        "id": "Q2",
+        "question": "Explain the fundamental components of a deep neural network and their roles.",
+        "modelAnswer": "A deep neural network consists of input layers, hidden layers, and output layers. Each layer contains neurons (nodes) connected by weighted edges. The input layer receives data, hidden layers perform transformations through activation functions, and the output layer produces predictions. Weights and biases are adjusted during training to minimize error.",
+        "points": [
+          "Identification of layer types",
+          "Understanding of neurons and connections",
+          "Explanation of data flow",
+          "Mention of weights and training"
+        ]
+      }
+    ],
+    "L7": [
+      {
+        "id": "Q3",
+        "question": "Describe the purpose and process of forward propagation in neural networks.",
+        "modelAnswer": "Forward propagation is the process where input data flows through the neural network to generate predictions. Data is transformed at each layer through weighted sums and activation functions. The process starts at the input layer, moves through hidden layers applying transformations, and ends at the output layer producing the final output.",
+        "points": [
+          "Clear explanation of data flow",
+          "Understanding of layer transformations",
+          "Mention of activation functions",
+          "Description of input to output process"
+        ]
+      }
+    ],
+    "L2": [
+      {
+        "id": "Q4",
+        "question": "What are the main types of supervised learning algorithms and their applications?",
+        "modelAnswer": "The main types of supervised learning algorithms include classification algorithms (like decision trees, random forests, and support vector machines) for categorical predictions, and regression algorithms (like linear regression, polynomial regression) for continuous value predictions. Classification is used for tasks like spam detection and image recognition, while regression is used for price prediction and trend analysis.",
+        "points": [
+          "Distinction between classification and regression",
+          "Examples of specific algorithms",
+          "Real-world applications",
+          "Understanding of use cases"
+        ]
+      }
+    ],
+    "L5": [
+      {
+        "id": "Q5",
+        "question": "Explain the architecture and advantages of Convolutional Neural Networks (CNNs).",
+        "modelAnswer": "CNNs are specialized neural networks designed for processing grid-like data, particularly images. They use convolutional layers to detect features, pooling layers to reduce dimensionality, and fully connected layers for final classification. Key advantages include parameter sharing, translation invariance, and hierarchical feature learning. They excel in tasks like image classification, object detection, and computer vision applications.",
+        "points": [
+          "Description of CNN architecture",
+          "Understanding of layer types",
+          "Explanation of advantages",
+          "Mention of practical applications"
+        ]
+      }
+    ]
+  },
+  "grading_criteria": {
+    "excellent": {
+      "score": 5,
+      "description": "Comprehensive understanding with detailed explanation"
+    },
+    "good": {
+      "score": 4,
+      "description": "Clear understanding with most key points covered"
+    },
+    "satisfactory": {
+      "score": 3,
+      "description": "Basic understanding with some key points"
+    },
+    "needs_improvement": {
+      "score": 2,
+      "description": "Limited understanding with missing key points"
+    },
+    "insufficient": {
+      "score": 1,
+      "description": "Minimal understanding or incorrect information"
+    }
+  }
+}

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { BookOpen, Users, Clock, Star, Plus, ChevronRight } from 'lucide-react';
+import { BookOpen, Users, Clock, Star, Plus, ChevronRight, Search, Filter } from 'lucide-react';
 import CourseView from './CourseView';
 
 const Courses: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const courses = [
     {
@@ -35,7 +36,7 @@ const Courses: React.FC = () => {
       students: 52,
       lectures: 10,
       rating: 4.9,
-      status: 'Active',
+      status: 'Canceled',
       progress: 85,
       image: 'https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg'
     }
@@ -45,6 +46,11 @@ const Courses: React.FC = () => {
     return <CourseView onBack={() => setSelectedCourse(null)} />;
   }
 
+  const filteredCourses = courses.filter(course =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
@@ -52,21 +58,41 @@ const Courses: React.FC = () => {
           <h2 className="text-2xl font-bold teacher-gradient-text">My Courses</h2>
           <p className="text-gray-600">Manage and monitor your courses</p>
         </div>
-        <button className="px-4 py-2 teacher-gradient-primary rounded-lg hover:shadow-lg transition-all duration-300 flex items-center">
-          <Plus className="h-5 w-5 mr-2" />
-          Create New Course
-        </button>
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search courses..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0359a8] focus:border-transparent transition-all duration-300"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </div>
+          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-300">
+            <Filter className="h-5 w-5" />
+          </button>
+          <button className="px-4 py-2 teacher-gradient-primary rounded-lg hover:shadow-lg transition-all duration-300 flex items-center">
+            <Plus className="h-5 w-5 mr-2" />
+            Create Course
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
-          <div key={course.id} className="teacher-gradient-card rounded-xl overflow-hidden hover-scale">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredCourses.map((course) => (
+          <div 
+            key={course.id} 
+            className="teacher-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer"
+            onClick={() => setSelectedCourse(course.id)}
+          >
             <div className="relative h-48">
               <img 
                 src={course.image} 
                 alt={course.title} 
                 className="w-full h-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute top-4 right-4">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                   course.status === 'Active' 
@@ -76,35 +102,41 @@ const Courses: React.FC = () => {
                   {course.status}
                 </span>
               </div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <h3 className="text-xl font-semibold mb-1">{course.title}</h3>
+                <p className="text-sm opacity-90">{course.code}</p>
+              </div>
             </div>
             
             <div className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold teacher-gradient-text">{course.title}</h3>
-                <span className="text-sm font-medium text-gray-500">{course.code}</span>
-              </div>
-              
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-between text-gray-600">
-                  <div className="flex items-center">
-                    <Users className="h-5 w-5 mr-2" />
-                    <span>{course.students} Students</span>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-[#0359a8]" />
                   </div>
-                  <div className="flex items-center">
-                    <BookOpen className="h-5 w-5 mr-2" />
-                    <span>{course.lectures} Lectures</span>
+                  <div>
+                    <p className="text-sm text-gray-500">Students</p>
+                    <p className="font-semibold">{course.students}</p>
                   </div>
                 </div>
-                
-                <div className="flex items-center justify-between text-gray-600">
-                  <div className="flex items-center">
-                    <Star className="h-5 w-5 mr-2 text-yellow-400" />
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                    <BookOpen className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Lectures</p>
+                    <p className="font-semibold">{course.lectures}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center text-yellow-500">
+                    <Star className="h-4 w-4 fill-current mr-1" />
                     <span>{course.rating}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Clock className="h-5 w-5 mr-2" />
-                    <span>8 weeks</span>
-                  </div>
+                  <span className="text-gray-500">8 weeks</span>
                 </div>
 
                 <div>
@@ -121,18 +153,10 @@ const Courses: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <button 
-                  onClick={() => setSelectedCourse(course.id)}
-                  className="px-4 py-2 teacher-gradient-primary rounded-lg hover:shadow-lg transition-all duration-300 flex items-center"
-                >
-                  View Course
-                  <ChevronRight className="h-5 w-5 ml-2" />
-                </button>
-                <button className="p-2 text-gray-600 hover:text-[#0359a8] transition-colors duration-300">
-                  Edit
-                </button>
-              </div>
+              <button className="w-full mt-6 py-2 text-[#0359a8] border border-[#0359a8] rounded-lg hover:bg-[#0359a8] hover:text-white transition-all duration-300 flex items-center justify-center group">
+                Manage Course
+                <ChevronRight className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
             </div>
           </div>
         ))}

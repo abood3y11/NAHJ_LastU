@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 interface QuizPopupProps {
   isOpen: boolean;
@@ -12,6 +12,8 @@ interface QuizPopupProps {
 
 const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
   const [answers, setAnswers] = useState<string[]>(Array(5).fill(''));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen || !lecture) return null;
 
@@ -23,10 +25,34 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
     "How does this topic connect with other areas of the course?"
   ];
 
-  const handleSubmit = () => {
-    // Here you can handle the submission of answers
-    console.log('Answers:', answers);
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      const response = await fetch('http://localhost:5000/api/quiz/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lectureId: lecture.id,
+          answers: answers
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit quiz');
+      }
+
+      const data = await response.json();
+      console.log('Quiz feedback:', data.feedback);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -52,6 +78,12 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
         </div>
 
         <div className="p-6 max-h-[70vh] overflow-y-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg">
+              {error}
+            </div>
+          )}
+
           <div className="space-y-8">
             {questions.map((question, index) => (
               <div key={index} className="space-y-4">
@@ -71,6 +103,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
                     }}
                     placeholder="Type your answer here..."
                     className="w-full h-32 p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#42bff5] focus:border-transparent transition-all duration-300 resize-none"
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -83,14 +116,23 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
             <button
               onClick={onClose}
               className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-8 py-2 bg-gradient-to-r from-[#42bff5] to-[#93e9f5] text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              disabled={isSubmitting}
+              className="px-8 py-2 bg-gradient-to-r from-[#42bff5] to-[#93e9f5] text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center"
             >
-              Submit Answers
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Answers'
+              )}
             </button>
           </div>
         </div>

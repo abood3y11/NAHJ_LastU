@@ -5,6 +5,7 @@ from datetime import datetime
 from crewai import Agent, Task, Crew, Process
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ openai = ChatOpenAI(
 # Mock database (replace with real database in production)
 courses = []
 users = []
+quiz_submissions = []
 
 # Create AI Agents
 teacher_agent = Agent(
@@ -178,6 +180,55 @@ def grade_assignment():
         'grade': result,
         'submission_id': data.get('submission_id')
     })
+
+@app.route('/api/quiz/submit', methods=['POST'])
+def submit_quiz():
+    data = request.get_json()
+    
+    if not data or 'lectureId' not in data or 'answers' not in data:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Load quiz data
+    with open('backend/json/quiz_data.json', 'r') as f:
+        quiz_data = json.load(f)
+    
+    # Get questions for the specific lecture
+    lecture_questions = quiz_data['questions'].get(data['lectureId'], [])
+    
+    if not lecture_questions:
+        return jsonify({'error': 'No questions found for this lecture'}), 404
+    
+    # Create a task for the grading agent to evaluate the answers
+    task = Task(
+        description=f"Evaluate quiz answers for lecture {data['lectureId']} comparing with model answers",
+        agent=grading_agent
+    )
+    
+    crew = Crew(
+        agents=[grading_agent],
+        tasks=[task],
+        process=Process.sequential
+    )
+    
+    # Get AI feedback on the answers
+    result = crew.kickoff()
+    
+    # Store the submission with questions and answers
+    submission = {
+        'id': len(quiz_submissions) + 1,
+        'lectureId': data['lectureId'],
+        'questions': lecture_questions,
+        'answers': data['answers'],
+        'feedback': result,
+        'timestamp': datetime.now().isoformat()
+    }
+    quiz_submissions.append(submission)
+    
+    return jsonify({
+        'message': 'Quiz submitted successfully',
+        'feedback': result,
+        'questions': lecture_questions
+    }), 201
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():

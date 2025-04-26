@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, Users, Clock, BookOpen, BarChart2, MessageSquare } from 'lucide-react';
+import LiveClassroom from '../LiveClassroom/LiveClassroom';
 
 interface CourseViewProps {
   onBack: () => void;
 }
 
 const CourseView: React.FC<CourseViewProps> = ({ onBack }) => {
+  const [showLiveClassroom, setShowLiveClassroom] = useState(false);
+
   const lectures = [
     {
       id: 1,
@@ -76,30 +79,9 @@ const CourseView: React.FC<CourseViewProps> = ({ onBack }) => {
     }
   };
 
-  const getActionButton = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'live':
-        return (
-          <button className="px-6 py-2 teacher-gradient-primary rounded-lg hover:shadow-lg transition-all duration-300">
-            Join Now
-          </button>
-        );
-      case 'upcoming':
-        return (
-          <button className="px-6 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all duration-300">
-            Prepare
-          </button>
-        );
-      case 'completed':
-        return (
-          <button className="px-6 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300">
-            View Report
-          </button>
-        );
-      default:
-        return null;
-    }
-  };
+  if (showLiveClassroom) {
+    return <LiveClassroom onClose={() => setShowLiveClassroom(false)} />;
+  }
 
   return (
     <div className="p-8">
@@ -167,7 +149,22 @@ const CourseView: React.FC<CourseViewProps> = ({ onBack }) => {
                   </div>
                 </div>
                 <div>
-                  {getActionButton(lecture.status)}
+                  {lecture.status === 'Live' ? (
+                    <button 
+                      onClick={() => setShowLiveClassroom(true)}
+                      className="px-6 py-2 teacher-gradient-primary rounded-lg hover:shadow-lg transition-all duration-300"
+                    >
+                      Join Now
+                    </button>
+                  ) : lecture.status === 'Upcoming' ? (
+                    <button className="px-6 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all duration-300">
+                      Prepare
+                    </button>
+                  ) : (
+                    <button className="px-6 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                      View Report
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
