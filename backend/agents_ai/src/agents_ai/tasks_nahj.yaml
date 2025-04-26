@@ -1,0 +1,23 @@
+research_task:
+  name: "Analyze Lecture Content"
+  description: >
+    Analyze this educational content:
+    Course: {course_name}
+    Lecture: {lecture_title}
+    Identify the 5 most important concepts students should understand.
+  expected_output: >
+    A markdown list of 5 key concepts with brief explanations of their importance.
+  agent: researcher
+
+question_task:
+  name: "Generate Quiz Questions"
+  description: >
+    Using the key concepts identified in the research task, create 5 assessment questions that:
+    1. Cover different cognitive levels (remember, understand, apply, analyze, evaluate)
+    2. Are clear and unambiguous
+    3. Test genuine understanding of the material
+    4. Are appropriate for university-level students
+  expected_output: >
+    A JSON array containing 5 well-formulated questions about the lecture content.
+    Format: ["question1", "question2", ...]
+  agent: question_writer

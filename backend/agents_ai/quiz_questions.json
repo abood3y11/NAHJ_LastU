@@ -1,0 +1,7 @@
+[
+  "Define supervised and unsupervised learning, providing a real-world example of each and explaining the key differences between them.",
+  "Explain the bias-variance tradeoff. Describe a scenario where a model exhibits high bias and another where it exhibits high variance.  Suggest a regularization technique that could mitigate one of these problems.",
+  "You are tasked with building a model to predict customer churn for a telecommunications company.  Explain which supervised learning approach (regression or classification) would be most appropriate and justify your choice.  Then, list three evaluation metrics you would use to assess your model's performance, explaining why they are suitable for this problem.",
+  "Analyze the impact of feature engineering on model performance. Provide specific examples of feature transformations (e.g., one-hot encoding, scaling) and explain how they can improve the accuracy and interpretability of a machine learning model. Discuss situations where feature selection might be beneficial.",
+  "Evaluate the strengths and weaknesses of using accuracy as a primary evaluation metric.  Discuss situations where accuracy might be misleading and suggest alternative metrics that would provide a more comprehensive assessment of model performance, particularly in scenarios with imbalanced datasets."
+]

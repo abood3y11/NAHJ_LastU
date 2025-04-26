@@ -1,0 +1,9 @@
+```json
+[
+  "Explain the difference between integers, floats, and strings in programming, providing an example of each data type and a scenario where each would be appropriately used.",
+  "Write a Python code snippet that uses a `for` loop to iterate through a list of numbers and print only the even numbers. Explain your code's logic, including the use of the modulo operator (%)",
+  "Describe the purpose of conditional statements (`if`, `elif`, `else`) in programming.  Give a practical example where you would use a nested `if` statement to make a decision based on multiple conditions.",
+  "Compare and contrast lists and dictionaries in Python.  Provide examples demonstrating how to access elements in each data structure, and explain when you would choose one over the other based on the type of data you need to store and manipulate.",
+  "Define a Python function that takes two numbers as input and returns their sum, difference, and product.  Explain the benefits of using functions to modularize code and improve readability, using this example to illustrate your points."
+]
+```

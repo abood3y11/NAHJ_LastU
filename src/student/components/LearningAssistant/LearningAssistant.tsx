@@ -15,6 +15,7 @@ interface Lecture {
   description: string;
   date: string;
   time: string;
+  courseId?: string; // Optional field to link back to course
 }
 
 const LearningAssistant: React.FC = () => {
@@ -28,6 +29,7 @@ const LearningAssistant: React.FC = () => {
   const [selectedLecture, setSelectedLecture] = useState<Lecture | null>(null);
   const [showLectures, setShowLectures] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [loadingQuiz, setLoadingQuiz] = useState(false);
 
   useEffect(() => {
     fetch('/backend/json/lectures.json')
@@ -85,11 +87,24 @@ const LearningAssistant: React.FC = () => {
   const handleLectureSelect = (lecture: Lecture) => {
     setSelectedLecture(lecture);
     setShowLectures(false);
-    setShowQuiz(true);
+    setLoadingQuiz(true);
+    
+    // Add the course name to the lecture object for use in the quiz
+    const lectureWithCourse = {
+      ...lecture,
+      courseName: selectedCourse?.name || ""
+    };
+    
     setMessages(prev => [...prev,
       { type: 'user', content: `I want to focus on ${lecture.title}` },
       { type: 'ai', content: `Great choice! Let's assess your knowledge of ${lecture.title}. I'll generate a quiz to help identify any gaps in understanding.` }
     ]);
+    
+    // Show quiz after a short delay to simulate fetching questions
+    setTimeout(() => {
+      setLoadingQuiz(false);
+      setShowQuiz(true);
+    }, 1000);
   };
 
   const handleQuizClose = () => {
@@ -217,6 +232,13 @@ const LearningAssistant: React.FC = () => {
                     ))}
                   </div>
                 )}
+                
+                {loadingQuiz && (
+                  <div className="flex justify-center items-center p-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#42bff5]"></div>
+                    <span className="ml-3">Generating quiz questions...</span>
+                  </div>
+                )}
               </div>
 
               <div className="relative">
@@ -276,11 +298,17 @@ const LearningAssistant: React.FC = () => {
         </div>
       </div>
 
-      <QuizPopup
-        isOpen={showQuiz}
-        onClose={handleQuizClose}
-        lecture={selectedLecture}
-      />
+      {selectedLecture && selectedCourse && (
+        <QuizPopup
+          isOpen={showQuiz}
+          onClose={handleQuizClose}
+          lecture={{
+            title: selectedLecture.title,
+            id: selectedLecture.id,
+            courseName: selectedCourse.name
+          }}
+        />
+      )}
     </div>
   );
 };
