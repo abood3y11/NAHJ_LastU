@@ -392,7 +392,7 @@ def generate_topic_specific_questions(lecture_title, course_name):
         ]
     elif "machine learning" in lecture_title or "machine learning" in course_name:
         return [
-            "What is machine learning and how does it differ from traditional programming?",
+            "What is machine learning and how does it (ABOOD) from traditional programming?",
             "Explain the difference between supervised and unsupervised learning.",
             "What is the purpose of splitting data into training and test sets?",
             "Describe the concept of overfitting and how to prevent it.",

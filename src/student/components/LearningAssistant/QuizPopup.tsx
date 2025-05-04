@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+/** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
+import React, { useState, useEffect, useCallback } from 'react';
+import { X, CheckCircle2, XCircle } from 'lucide-react';
 
 interface QuizPopupProps {
   isOpen: boolean;
@@ -32,18 +34,9 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
   const [submitted, setSubmitted] = useState(false);
   const [analyzingAnswers, setAnalyzingAnswers] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && lecture) {
-      fetchQuestions();
-      // Reset state when reopening
-      setAnswers([]);
-      setResults([]);
-      setOverallScore(null);
-      setSubmitted(false);
-    }
-  }, [isOpen, lecture]);
-
-  const fetchQuestions = async () => {
+  // Fixed: Added fetchQuestions to the dependency array
+  // Using useCallback to prevent dependency cycle in useEffect
+  const fetchQuestions = useCallback(async () => {
     if (!lecture) return;
     
     setIsLoading(true);
@@ -77,8 +70,6 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
         response = await fetch('http://localhost:8000/test-generate-quiz');
       }
       
-      console.log("Raw response:", response);
-      
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
@@ -86,20 +77,16 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
       const data = await response.json();
       setResponseData(data); // Store the full response for debugging
       
-      console.log("Response data:", data);
-      
       // Handle both possible formats of the response
-      let extractedQuestions;
+      let extractedQuestions: string[] = [];
+      
       if (data.questions && Array.isArray(data.questions)) {
         extractedQuestions = data.questions;
       } else if (data.detail && data.detail.questions && Array.isArray(data.detail.questions)) {
         extractedQuestions = data.detail.questions;
       } else {
-        console.error("Invalid questions format:", data);
-        throw new Error('Invalid question format received: ' + JSON.stringify(data));
+        throw new Error('Invalid question format received');
       }
-
-      console.log("Extracted questions:", extractedQuestions);
       
       setQuestions(extractedQuestions);
       setAnswers(Array(extractedQuestions.length).fill(''));
@@ -125,19 +112,39 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [lecture]);
+  
+  useEffect(() => {
+    if (isOpen && lecture) {
+      // Reset state when reopening
+      setAnswers([]);
+      setResults([]);
+      setOverallScore(null);
+      setSubmitted(false);
+      setError(null);
+      
+      // Then fetch questions
+      fetchQuestions();
+    }
+  }, [isOpen, lecture, fetchQuestions]);
+
+  
 
   const analyzeAnswers = async () => {
     if (!lecture || questions.length === 0) return;
     
     setAnalyzingAnswers(true);
+    setError(null);
     
     try {
+      // Validate that we have answers for all questions
+      const validAnswers = answers.map(a => a || ''); // Replace nulls/undefined with empty strings
+      
       console.log("Analyzing answers for:", {
         lecture_title: lecture.title,
         course_name: lecture.courseName,
         questions: questions,
-        answers: answers
+        answers: validAnswers
       });
       
       const response = await fetch('http://localhost:8000/analyze-answers', {
@@ -150,7 +157,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
           lecture_title: lecture.title,
           course_name: lecture.courseName,
           questions: questions,
-          answers: answers
+          answers: validAnswers
         }),
       });
       
@@ -174,7 +181,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
     } catch (err) {
       console.error('Error analyzing answers:', err);
       // Create fallback results if the analysis fails
-      const fallbackResults = answers.map((answer, index) => ({
+      const fallbackResults: AnswerResult[] = answers.map((answer, index) => ({
         is_correct: answer.length > 50, // Simple fallback - consider answers over 50 chars as correct
         score: answer.length > 50 ? 70 : 30,
         feedback: answer.length > 50 
@@ -195,34 +202,6 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
 
   const handleSubmit = async () => {
     await analyzeAnswers();
-  };
-
-  const testDirectFetch = async () => {
-    try {
-      setIsLoading(true);
-      const testData = {
-        lecture_title: "Test Lecture",
-        course_name: "Test Course"
-      };
-      
-      console.log("TEST: Sending request with:", testData);
-      
-      const response = await fetch('http://localhost:8000/test-generate-quiz');
-      console.log("TEST: Raw response:", response);
-      
-      const data = await response.json();
-      console.log("TEST: Response data:", data);
-      
-      if (data.questions && Array.isArray(data.questions)) {
-        setQuestions(data.questions);
-        setAnswers(Array(data.questions.length).fill(''));
-        console.log("TEST: Questions set successfully");
-      }
-    } catch (err) {
-      console.error("TEST: Error during test fetch:", err);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   // Function to restart the quiz
@@ -277,13 +256,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
               <p className="font-medium">Error:</p>
               <p className="text-sm mt-1">{error}</p>
               
-              {/* Debug info - can be removed in production */}
-              <details className="mt-2 text-xs">
-                <summary>Debug Info</summary>
-                <pre className="mt-2 p-2 bg-gray-100 rounded overflow-auto max-h-40">
-                  {JSON.stringify(responseData, null, 2)}
-                </pre>
-              </details>
+              {/* Removed debug info in production */}
             </div>
           )}
           
@@ -378,17 +351,12 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, lecture }) => {
         </div>
 
         <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-          <div className="flex justify-between space-x-4">
+          <div className="flex justify-between">
             <div>
-              {/* <button 
-                onClick={testDirectFetch}
-                className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-              >
-                Test Connection
-              </button> */}
+              {/* Debug buttons removed */}
             </div>
             <div className="flex space-x-4">
-            <button
+              <button
                 onClick={onClose}
                 className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
                 disabled={isLoading || analyzingAnswers}
