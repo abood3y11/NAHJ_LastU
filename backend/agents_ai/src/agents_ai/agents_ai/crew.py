@@ -154,4 +154,4 @@ class AgentsAi():
             )
         except Exception as e:
             logger.error(f"Error creating crew: {str(e)}")
-            raise
+            raise e
