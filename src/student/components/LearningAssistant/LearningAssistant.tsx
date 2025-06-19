@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Brain, MessageSquare, Send, ArrowLeft, Sparkles, Target, BarChart as ChartBar, Route, BookMarked } from 'lucide-react';
 import QuizPopup from './QuizPopup';
-// import ContentRecommendations from './ContentRecommendations';
 import SimpleFacialTracker from './SimpleFacialTracker';
 import FacialAnalysisTracker from './FacialAnalysisTracker';
 
@@ -18,17 +17,7 @@ interface Lecture {
   description: string;
   date: string;
   time: string;
-  courseId?: string; // Optional field to link back to course
-}
-
-interface Recommendation {
-  title: string;
-  type: string;
-  sections: string[];
-  outcomes: string[];
-  estimated_time: string;
-  relevance: string;
-  priority: number;
+  courseId?: string;
 }
 
 // Track student engagement data
@@ -139,7 +128,6 @@ const LearningAssistant: React.FC = () => {
           type: 'ai', 
           content: 'I can provide personalized content recommendations based on your learning patterns. Would you like to see recommendations for your current courses?' 
         }]);
-        // Show recommendations tab
         setActiveTab('recommendations');
         setShowRecommendations(true);
       }, 1000);
@@ -162,7 +150,6 @@ const LearningAssistant: React.FC = () => {
       { type: 'ai', content: `I'll analyze your performance in ${course.name}. Please select a specific lecture to focus on:` }
     ]);
     
-    // Update student data with selected course
     setStudentData(prev => ({
       ...prev,
       currentCourse: {
@@ -178,7 +165,6 @@ const LearningAssistant: React.FC = () => {
     setShowLectures(false);
     setLoadingQuiz(true);
     
-    // Add the course name to the lecture object for use in the quiz
     const lectureWithCourse = {
       ...lecture,
       courseName: selectedCourse?.name || ""
@@ -189,7 +175,6 @@ const LearningAssistant: React.FC = () => {
       { type: 'ai', content: `Great choice! Let's assess your knowledge of ${lecture.title}. I'll generate a quiz to help identify any gaps in understanding.` }
     ]);
     
-    // Update student data with selected lecture topics
     setStudentData(prev => ({
       ...prev,
       currentCourse: {
@@ -198,7 +183,6 @@ const LearningAssistant: React.FC = () => {
       }
     }));
     
-    // Show quiz after a short delay to simulate fetching questions
     setTimeout(() => {
       setLoadingQuiz(false);
       setShowQuiz(true);
@@ -211,18 +195,51 @@ const LearningAssistant: React.FC = () => {
       { type: 'ai', content: "Thank you for completing the assessment. I'll analyze your answers and provide personalized recommendations." }
     ]);
     
-    // After quiz is completed, show content recommendations
     setActiveTab('recommendations');
     setShowRecommendations(true);
   };
+
+  const handleBack = () => {
+    window.location.reload();
+  };
+
+  // Handle emotion updates from the facial analysis tracker
+  const handleEmotionDetected = (emotion: string) => {
+    if (emotion === 'sleepy' && engagementData.currentScore < 30) {
+      setMessages(prev => [...prev, 
+        { type: 'ai', content: "I notice you seem a bit tired. Would you like to take a short break or switch to a more interactive learning activity?" }
+      ]);
+    } else if (emotion === 'focused' && engagementData.timeline.length % 5 === 0) {
+      setMessages(prev => [...prev, 
+        { type: 'ai', content: "Great focus! You're making excellent progress with this material." }
+      ]);
+    }
+    
+    setEngagementData(prev => ({
+      ...prev,
+      dominantEmotion: emotion,
+      timeline: [...prev.timeline, {
+        timestamp: new Date(),
+        emotion: emotion,
+        score: prev.currentScore
+      }]
+    }));
+  };
   
-  const handleRecommendationSelect = (recommendation: Recommendation) => {
-    // Switch back to chat tab and add messages about the selected recommendation
-    setActiveTab('chat');
-    setMessages(prev => [...prev,
-      { type: 'user', content: `Tell me more about "${recommendation.title}"` },
-      { type: 'ai', content: `"${recommendation.title}" is a ${recommendation.type} that covers ${recommendation.sections.join(", ")}. It will help you ${recommendation.outcomes.join(" and ")}. This is particularly relevant for you because ${recommendation.relevance}. Would you like me to help you access this content?` }
-    ]);
+  // Handle engagement score updates
+  const handleEngagementUpdate = (score: number) => {
+    const previousScore = engagementData.currentScore;
+    
+    setEngagementData(prev => ({
+      ...prev,
+      currentScore: score
+    }));
+    
+    if (score < 40 && previousScore >= 40) {
+      setMessages(prev => [...prev, 
+        { type: 'ai', content: "I've noticed your engagement has decreased. Would you like to try a different learning format or topic?" }
+      ]);
+    }
   };
 
   const suggestions = [
@@ -262,58 +279,6 @@ const LearningAssistant: React.FC = () => {
     }
   ];
 
-  const handleBack = () => {
-    window.location.reload();
-  };
-
-  // Handle emotion updates from the facial analysis tracker
-  const handleEmotionDetected = (emotion: string) => {
-    // Update AI messages based on detected emotions
-    if (emotion === 'sleepy' && engagementData.currentScore < 30) {
-      setMessages(prev => [...prev, 
-        { type: 'ai', content: "I notice you seem a bit tired. Would you like to take a short break or switch to a more interactive learning activity?" }
-      ]);
-    } else if (emotion === 'focused' && faceRecords.length % 5 === 0) {
-      // Positive reinforcement every 5 focused detections
-      setMessages(prev => [...prev, 
-        { type: 'ai', content: "Great focus! You're making excellent progress with this material." }
-      ]);
-    }
-    
-    // Update the engagement timeline
-    setEngagementData(prev => ({
-      ...prev,
-      dominantEmotion: emotion,
-      timeline: [...prev.timeline, {
-        timestamp: new Date(),
-        emotion: emotion,
-        score: prev.currentScore
-      }]
-    }));
-  };
-  
-  // Handle engagement score updates
-  const handleEngagementUpdate = (score: number) => {
-    const previousScore = engagementData.currentScore;
-    
-    setEngagementData(prev => ({
-      ...prev,
-      currentScore: score
-    }));
-    
-    // Adapt content recommendations based on engagement level
-    if (score < 40 && previousScore >= 40) {
-      // Engagement dropped significantly
-      setMessages(prev => [...prev, 
-        { type: 'ai', content: "I've noticed your engagement has decreased. Would you like to try a different learning format or topic?" }
-      ]);
-    }
-  };
-  
-  // Store face records for the session
-  const [faceRecords, setFaceRecords] = useState<any[]>([]);
-
-  // Tab navigation handler
   const handleTabChange = (tab: 'chat' | 'recommendations') => {
     setActiveTab(tab);
   };
@@ -484,27 +449,7 @@ const LearningAssistant: React.FC = () => {
             </>
           )}
           
-          {/* Recommendations Tab Content
-          {activeTab === 'recommendations' && showRecommendations && studentData.currentCourse && (
-            <ContentRecommendations 
-              studentName={studentData.name}
-              currentCourse={studentData.currentCourse}
-              courseHistory={studentData.courseHistory}
-              assessmentData={studentData.assessmentData}
-              onSelect={handleRecommendationSelect}
-            />
-          )} */}
-          <div>
-              <SimpleFacialTracker
-                onEmotionDetected={(emotion, confidence) => {
-                  console.log(`Detected: ${emotion} (${confidence})`);
-                }}
-                captureInterval={20000}
-              />
-          </div>
-          
-          
-          {/* Prompt to select a course if no course is selected */}
+          {/* Recommendations Tab Content */}
           {activeTab === 'recommendations' && !showRecommendations && (
             <div className="glass-card rounded-2xl p-10 text-center">
               <BookOpen className="h-16 w-16 mx-auto text-[#42bff5] mb-4" />
@@ -524,6 +469,27 @@ const LearningAssistant: React.FC = () => {
               </button>
             </div>
           )}
+
+          {/* Facial Tracking Components */}
+          <div>
+            <SimpleFacialTracker
+              onEmotionDetected={(emotion, confidence) => {
+                console.log(`Simple tracker detected: ${emotion} (${confidence})`);
+                handleEmotionDetected(emotion);
+              }}
+              captureInterval={20000}
+            />
+          </div>
+          
+          <div>
+            <FacialAnalysisTracker
+              studentId={studentData.name}
+              sessionId={selectedCourse ? selectedCourse.id : 'general-session'}
+              captureInterval={20000}
+              onEmotionDetected={handleEmotionDetected}
+              onEngagementUpdate={handleEngagementUpdate}
+            />
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -544,15 +510,6 @@ const LearningAssistant: React.FC = () => {
           ))}
         </div>
       </div>
-      
-      {/* Facial Analysis Tracker */}
-      <FacialAnalysisTracker
-        studentId={studentData.name}
-        sessionId={selectedCourse ? selectedCourse.id : 'general-session'}
-        captureInterval={20000} // 20 seconds
-        onEmotionDetected={handleEmotionDetected}
-        onEngagementUpdate={handleEngagementUpdate}
-      />
 
       {/* Quiz Popup */}
       {selectedLecture && selectedCourse && (
