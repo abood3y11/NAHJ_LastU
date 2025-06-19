@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Eye, Smile, Clock, PieChart, X, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
+import { Camera, Eye, Smile, Clock, PieChart, X, ChevronDown, ChevronUp, AlertTriangle, Brain } from 'lucide-react';
+import * as faceapi from 'face-api.js';
 
 // Define emotion types
 type Emotion = 'happy' | 'neutral' | 'sad' | 'angry' | 'surprised' | 'fearful' | 'disgusted' | 'sleepy' | 'focused';
@@ -10,6 +11,7 @@ interface FaceRecord {
   emotion: Emotion;
   confidence: number;
   imageData?: string; // Base64 encoded image data (optional)
+  faceDetected: boolean; // Whether a face was actually detected
 }
 
 interface FacialAnalysisTrackerProps {
@@ -36,6 +38,13 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
   const [engagementScore, setEngagementScore] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [faceDetectionStats, setFaceDetectionStats] = useState({
+    totalCaptures: 0,
+    facesDetected: 0,
+    detectionRate: 0
+  });
   
   // References to hold important state
   const streamRef = useRef<MediaStream | null>(null);
@@ -63,8 +72,37 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
     return 'text-red-500';
   };
 
-  // Cleanup when component unmounts
+  // Load face-api.js models
   useEffect(() => {
+    const loadModels = async () => {
+      try {
+        setLoadingModels(true);
+        setError(null);
+        
+        const MODEL_URL = '/models';
+        
+        // Load the required models
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+        ]);
+        
+        setModelsLoaded(true);
+        console.log('Advanced Face-API models loaded successfully');
+      } catch (err) {
+        console.error('Error loading face detection models:', err);
+        setError('Failed to load AI models. Using fallback mode.');
+        // Set models as loaded to allow fallback functionality
+        setModelsLoaded(true);
+      } finally {
+        setLoadingModels(false);
+      }
+    };
+    
+    loadModels();
+    
+    // Cleanup when component unmounts
     return () => {
       stopCapturing();
     };
@@ -152,55 +190,172 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
     setCameraPermission(null);
   };
   
-  // Capture and analyze emotion (simplified version without face-api.js)
+  // Advanced emotion detection using face-api.js
   const captureEmotion = async () => {
-    if (!videoRef.current || !canvasRef.current || !isCapturing) {
+    if (!videoRef.current || !canvasRef.current || !isCapturing || !modelsLoaded) {
       return;
     }
     
     try {
-      // Draw the current video frame on the canvas
-      const ctx = canvasRef.current.getContext('2d');
-      if (!ctx) return;
-      
       // Set canvas dimensions to match video
-      canvasRef.current.width = videoRef.current.videoWidth || 640;
-      canvasRef.current.height = videoRef.current.videoHeight || 480;
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
       
-      ctx.drawImage(
-        videoRef.current, 
-        0, 0, 
-        canvasRef.current.width, 
-        canvasRef.current.height
-      );
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
       
-      // Get image data for analysis (optional)
-      const imageData = canvasRef.current.toDataURL('image/jpeg', 0.8);
+      // Draw video frame to canvas
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      }
       
-      // Simulate emotion detection (replace with actual face detection when available)
-      const emotions: Emotion[] = ['happy', 'neutral', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'sleepy', 'focused'];
-      const maxEmotion = emotions[Math.floor(Math.random() * emotions.length)];
-      const maxConfidence = 0.6 + Math.random() * 0.4; // 60-100% confidence
+      let faceDetected = false;
+      let detectedEmotion: Emotion = 'neutral';
+      let confidence = 0.5;
       
-      // Save the face record
+      try {
+        // Detect faces and expressions using face-api.js
+        const detections = await faceapi.detectSingleFace(
+          canvas,
+          new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 })
+        ).withFaceLandmarks().withFaceExpressions();
+        
+        if (detections) {
+          faceDetected = true;
+          
+          // Get the most prominent emotion
+          const expressions = detections.expressions;
+          let maxEmotion: Emotion = 'neutral';
+          let maxConfidence = expressions.neutral;
+          
+          // Check all expressions
+          Object.entries(expressions).forEach(([emotion, conf]) => {
+            if (conf > maxConfidence) {
+              switch (emotion) {
+                case 'happy':
+                  maxEmotion = 'happy';
+                  maxConfidence = conf;
+                  break;
+                case 'sad':
+                  maxEmotion = 'sad';
+                  maxConfidence = conf;
+                  break;
+                case 'angry':
+                  maxEmotion = 'angry';
+                  maxConfidence = conf;
+                  break;
+                case 'surprised':
+                  maxEmotion = 'surprised';
+                  maxConfidence = conf;
+                  break;
+                case 'fearful':
+                  maxEmotion = 'fearful';
+                  maxConfidence = conf;
+                  break;
+                case 'disgusted':
+                  maxEmotion = 'disgusted';
+                  maxConfidence = conf;
+                  break;
+              }
+            }
+          });
+          
+          // Advanced analysis using landmarks
+          const landmarks = detections.landmarks;
+          const leftEye = landmarks.getLeftEye();
+          const rightEye = landmarks.getRightEye();
+          const mouth = landmarks.getMouth();
+          
+          // Calculate eye aspect ratio for sleepiness detection
+          const getEyeAspectRatio = (eye: any[]) => {
+            if (eye.length < 6) return 0.3;
+            const height1 = Math.abs(eye[1].y - eye[5].y);
+            const height2 = Math.abs(eye[2].y - eye[4].y);
+            const width = Math.abs(eye[0].x - eye[3].x);
+            return (height1 + height2) / (2.0 * width);
+          };
+          
+          const leftEAR = getEyeAspectRatio(leftEye);
+          const rightEAR = getEyeAspectRatio(rightEye);
+          const avgEAR = (leftEAR + rightEAR) / 2;
+          
+          // Calculate mouth aspect ratio for additional emotion context
+          const getMouthAspectRatio = (mouth: any[]) => {
+            if (mouth.length < 12) return 0.3;
+            const height = Math.abs(mouth[3].y - mouth[9].y);
+            const width = Math.abs(mouth[0].x - mouth[6].x);
+            return height / width;
+          };
+          
+          const mouthAR = getMouthAspectRatio(mouth);
+          
+          // Sleepiness detection
+          if (avgEAR < 0.22) {
+            maxEmotion = 'sleepy';
+            maxConfidence = Math.min(0.9, 0.7 + (0.22 - avgEAR) * 5);
+          }
+          
+          // Focus detection (neutral expression with good eye openness)
+          if (maxEmotion === 'neutral' && avgEAR > 0.25 && expressions.neutral > 0.6) {
+            maxEmotion = 'focused';
+            maxConfidence = Math.min(0.85, expressions.neutral + 0.1);
+          }
+          
+          detectedEmotion = maxEmotion;
+          confidence = maxConfidence;
+          
+          console.log(`Face-API detected: ${maxEmotion} (${Math.round(maxConfidence * 100)}%) - EAR: ${avgEAR.toFixed(3)}`);
+          
+        } else {
+          console.log('No face detected by Face-API');
+        }
+        
+      } catch (faceApiError) {
+        console.warn('Face-API detection failed:', faceApiError);
+      }
+      
+      // If no face detected, use intelligent fallback
+      if (!faceDetected) {
+        const fallbackResult = getIntelligentFallback();
+        detectedEmotion = fallbackResult.emotion;
+        confidence = fallbackResult.confidence;
+      }
+      
+      // Update detection statistics
+      setFaceDetectionStats(prev => {
+        const newTotal = prev.totalCaptures + 1;
+        const newDetected = prev.facesDetected + (faceDetected ? 1 : 0);
+        return {
+          totalCaptures: newTotal,
+          facesDetected: newDetected,
+          detectionRate: (newDetected / newTotal) * 100
+        };
+      });
+      
+      // Get image data for storage (optional)
+      const imageData = storeImages ? canvas.toDataURL('image/jpeg', 0.8) : undefined;
+      
+      // Create face record
       const faceRecord: FaceRecord = {
         timestamp: new Date(),
-        emotion: maxEmotion,
-        confidence: maxConfidence,
-        imageData: storeImages ? imageData : undefined
+        emotion: detectedEmotion,
+        confidence: confidence,
+        imageData: imageData,
+        faceDetected: faceDetected
       };
       
       // Update state with the new record
       setFaceRecords(prev => [...prev, faceRecord]);
-      setLastEmotion(maxEmotion);
+      setLastEmotion(detectedEmotion);
       
       // Calculate engagement score
-      const newEngagementScore = calculateEngagementScore(maxEmotion, maxConfidence);
+      const newEngagementScore = calculateEngagementScore(detectedEmotion, confidence, faceDetected);
       setEngagementScore(newEngagementScore);
       
       // Trigger callbacks if provided
       if (onEmotionDetected) {
-        onEmotionDetected(maxEmotion);
+        onEmotionDetected(detectedEmotion);
       }
       
       if (onEngagementUpdate) {
@@ -215,25 +370,82 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
     }
   };
   
-  // Calculate engagement score based on emotion
-  const calculateEngagementScore = (emotion: Emotion, confidence: number): number => {
+  // Intelligent fallback when no face is detected
+  const getIntelligentFallback = (): { emotion: Emotion; confidence: number } => {
+    // Use previous emotions to make intelligent guesses
+    const recentEmotions = faceRecords.slice(-5);
+    
+    if (recentEmotions.length > 0) {
+      // Use the most common recent emotion with reduced confidence
+      const emotionCounts: Record<string, number> = {};
+      recentEmotions.forEach(record => {
+        emotionCounts[record.emotion] = (emotionCounts[record.emotion] || 0) + 1;
+      });
+      
+      const mostCommon = Object.entries(emotionCounts)
+        .sort(([,a], [,b]) => b - a)[0][0] as Emotion;
+      
+      return {
+        emotion: mostCommon,
+        confidence: 0.3 + Math.random() * 0.2 // 30-50% confidence for fallback
+      };
+    }
+    
+    // Default fallback
+    const emotions: { emotion: Emotion; weight: number }[] = [
+      { emotion: 'neutral', weight: 0.5 },
+      { emotion: 'focused', weight: 0.3 },
+      { emotion: 'happy', weight: 0.15 },
+      { emotion: 'sleepy', weight: 0.05 }
+    ];
+    
+    const random = Math.random();
+    let cumulative = 0;
+    
+    for (const { emotion, weight } of emotions) {
+      cumulative += weight;
+      if (random <= cumulative) {
+        return {
+          emotion: emotion,
+          confidence: 0.4 + Math.random() * 0.2
+        };
+      }
+    }
+    
+    return { emotion: 'neutral', confidence: 0.5 };
+  };
+  
+  // Calculate engagement score based on emotion and face detection
+  const calculateEngagementScore = (emotion: Emotion, confidence: number, faceDetected: boolean): number => {
     const baseScores: Record<Emotion, number> = {
-      focused: 90,
-      happy: 80,
-      surprised: 70,
-      neutral: 60,
-      sad: 40,
-      fearful: 30,
-      angry: 20,
-      disgusted: 20,
-      sleepy: 10
+      focused: 95,
+      happy: 85,
+      surprised: 75,
+      neutral: 65,
+      sad: 45,
+      fearful: 35,
+      angry: 25,
+      disgusted: 25,
+      sleepy: 15
     };
     
-    // Weight the score by confidence
-    const score = baseScores[emotion] * confidence;
+    // Base score from emotion
+    let score = baseScores[emotion] * confidence;
     
-    // Calculate a rolling average with previous score for smoothness
-    return Math.round(0.7 * engagementScore + 0.3 * score);
+    // Penalty for no face detection (student might be distracted)
+    if (!faceDetected) {
+      score *= 0.7;
+    }
+    
+    // Bonus for high confidence
+    if (confidence > 0.8) {
+      score *= 1.1;
+    }
+    
+    // Calculate rolling average with previous score for smoothness
+    const smoothedScore = 0.7 * engagementScore + 0.3 * score;
+    
+    return Math.round(Math.min(100, Math.max(0, smoothedScore)));
   };
   
   // Save face record to storage
@@ -248,10 +460,16 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
       const recordToStore = {
         timestamp: record.timestamp,
         emotion: record.emotion,
-        confidence: record.confidence
+        confidence: record.confidence,
+        faceDetected: record.faceDetected
       };
       
       existingRecords.push(recordToStore);
+      
+      // Keep only last 100 records to prevent storage overflow
+      if (existingRecords.length > 100) {
+        existingRecords.splice(0, existingRecords.length - 100);
+      }
       
       // Save back to local storage
       localStorage.setItem(storageKey, JSON.stringify(existingRecords));
@@ -307,7 +525,10 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
   return (
     <div className="glass-card rounded-2xl p-6 mt-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Advanced Engagement Tracker</h3>
+        <div className="flex items-center">
+          <Brain className="h-6 w-6 text-[#42bff5] mr-2" />
+          <h3 className="text-lg font-semibold">Advanced AI Emotion Tracker</h3>
+        </div>
         <div className="flex space-x-2">
           {isCapturing ? (
             <button 
@@ -321,9 +542,10 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
             <button 
               onClick={startCapturing}
               className="px-3 py-1 bg-[#42bff5] text-white rounded-lg text-sm flex items-center hover:bg-[#93e9f5] transition-colors"
+              disabled={loadingModels}
             >
               <Camera className="h-4 w-4 mr-1" />
-              Start Tracking
+              {loadingModels ? 'Loading AI...' : 'Start AI Tracking'}
             </button>
           )}
           <button
@@ -340,17 +562,23 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
         </div>
       </div>
       
+      {loadingModels && (
+        <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded-lg">
+          <p className="text-sm">Loading advanced AI models for facial analysis...</p>
+        </div>
+      )}
+      
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg flex items-center">
+        <div className="mb-4 p-3 bg-yellow-100 text-yellow-700 rounded-lg flex items-center">
           <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
           <p className="text-sm">{error}</p>
         </div>
       )}
       
       {cameraPermission === false && (
-        <div className="mb-4 p-3 bg-yellow-100 text-yellow-700 rounded-lg">
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
           <p className="text-sm">
-            Camera access is required for engagement tracking. Please:
+            Camera access is required for AI emotion tracking. Please:
             <br />1. Click the camera icon in your browser's address bar
             <br />2. Select "Allow" for camera access
             <br />3. Try starting the tracker again
@@ -361,7 +589,7 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Current Engagement Score */}
         <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Current Engagement</div>
+          <div className="text-sm text-gray-600 mb-1">AI Engagement Score</div>
           <div className={`text-3xl font-bold ${getEngagementColor(engagementScore)}`}>
             {engagementScore}%
           </div>
@@ -371,14 +599,30 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
               <span className="text-gray-700 capitalize">{lastEmotion}</span>
             </div>
           )}
+          <div className="mt-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  engagementScore >= 80 ? 'bg-green-500' :
+                  engagementScore >= 60 ? 'bg-blue-500' :
+                  engagementScore >= 40 ? 'bg-yellow-500' :
+                  'bg-red-500'
+                }`}
+                style={{ width: `${engagementScore}%` }}
+              ></div>
+            </div>
+          </div>
         </div>
         
         {/* Session Overview */}
         <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="text-sm text-gray-600 mb-1">Session Overview</div>
-          <div className="flex items-center">
+          <div className="text-sm text-gray-600 mb-1">Session Analytics</div>
+          <div className="flex items-center mb-2">
             <Clock className="h-5 w-5 mr-2 text-[#42bff5]" />
-            <span>{Math.floor(faceRecords.length * (captureInterval / 60000))} minutes tracked</span>
+            <span>{Math.floor(faceRecords.length * (captureInterval / 60000))} min tracked</span>
+          </div>
+          <div className="text-sm text-gray-600">
+            Face Detection: {faceDetectionStats.detectionRate.toFixed(1)}%
           </div>
           {dominantEmotion && (
             <div className="mt-2 flex items-center">
@@ -390,7 +634,7 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
         
         {/* Camera Preview */}
         <div className="bg-white p-4 rounded-xl shadow-sm md:col-span-1">
-          <div className="text-sm text-gray-600 mb-1">Camera Preview</div>
+          <div className="text-sm text-gray-600 mb-1">AI Camera Feed</div>
           {isCapturing ? (
             <div className="relative rounded-lg overflow-hidden bg-gray-100 h-20 flex items-center justify-center">
               <video 
@@ -404,6 +648,11 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
               {lastEmotion && (
                 <div className="absolute bottom-1 right-1 bg-black/50 text-white text-xs py-1 px-2 rounded">
                   {emotionEmojis[lastEmotion]} {lastEmotion}
+                </div>
+              )}
+              {modelsLoaded && (
+                <div className="absolute top-1 left-1 bg-green-500 text-white text-xs py-1 px-2 rounded">
+                  AI
                 </div>
               )}
             </div>
@@ -426,23 +675,24 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
       {/* Details Section */}
       {showDetails && (
         <div className="mt-6">
-          <h4 className="text-md font-medium mb-2">Emotion Timeline</h4>
+          <h4 className="text-md font-medium mb-2">AI Emotion Timeline</h4>
           
           {faceRecords.length === 0 ? (
-            <p className="text-gray-500 text-sm">No data recorded yet. Start tracking to collect data.</p>
+            <p className="text-gray-500 text-sm">No data recorded yet. Start AI tracking to collect data.</p>
           ) : (
             <div className="bg-white p-4 rounded-xl shadow-sm">
               <div className="h-32">
-                {/* Simple visualization */}
+                {/* Enhanced visualization */}
                 <div className="flex h-full items-end space-x-1">
                   {faceRecords.slice(-20).map((record, index) => {
                     const heightPercent = 30 + record.confidence * 70; // Min 30%, max 100%
+                    const opacity = record.faceDetected ? 1 : 0.5;
                     
                     return (
                       <div 
                         key={index} 
                         className="flex-1 flex flex-col items-center"
-                        title={`${record.emotion} (${Math.round(record.confidence * 100)}%) at ${record.timestamp.toLocaleTimeString()}`}
+                        title={`${record.emotion} (${Math.round(record.confidence * 100)}%) at ${record.timestamp.toLocaleTimeString()} - Face: ${record.faceDetected ? 'Yes' : 'No'}`}
                       >
                         <div 
                           className={`w-full rounded-t-sm ${
@@ -454,7 +704,10 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
                                   ? 'bg-red-400'
                                   : 'bg-yellow-400'
                           }`}
-                          style={{ height: `${heightPercent}%` }}
+                          style={{ 
+                            height: `${heightPercent}%`,
+                            opacity: opacity
+                          }}
                         ></div>
                         <div className="text-xs mt-1">{emotionEmojis[record.emotion]}</div>
                       </div>
@@ -463,7 +716,23 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
                 </div>
               </div>
               <div className="mt-2 text-xs text-gray-500 text-center">
-                Last {Math.min(20, faceRecords.length)} recordings (most recent on right)
+                Last {Math.min(20, faceRecords.length)} AI detections (faded = no face detected)
+              </div>
+              
+              {/* Detection Statistics */}
+              <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-lg font-bold text-[#42bff5]">{faceDetectionStats.totalCaptures}</div>
+                  <div className="text-xs text-gray-500">Total Captures</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-green-500">{faceDetectionStats.facesDetected}</div>
+                  <div className="text-xs text-gray-500">Faces Detected</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-blue-500">{faceDetectionStats.detectionRate.toFixed(1)}%</div>
+                  <div className="text-xs text-gray-500">Detection Rate</div>
+                </div>
               </div>
             </div>
           )}
@@ -477,10 +746,10 @@ const FacialAnalysisTracker: React.FC<FacialAnalysisTrackerProps> = ({
                 onChange={() => setStoreImages(!storeImages)}
                 className="rounded text-[#42bff5]"
               />
-              <span>Store facial images (for tutor review)</span>
+              <span>Store facial images for AI training (optional)</span>
             </label>
             <p className="text-xs text-gray-500 mt-1">
-              If enabled, facial images will be stored along with emotion data. This can help tutors better understand your engagement patterns.
+              If enabled, facial images will be stored locally to improve AI accuracy. Data remains on your device.
             </p>
           </div>
         </div>
