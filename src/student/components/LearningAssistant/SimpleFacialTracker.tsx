@@ -45,13 +45,11 @@ const SimpleFacialTracker: React.FC<SimpleFacialTrackerProps> = ({
         setLoadingModels(true);
         setError(null);
         
-        const MODEL_URL = '/models';
-        
-        // Load the required models
+        // Load the required models from their specific subdirectories
         await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+          faceapi.nets.tinyFaceDetector.loadFromUri('/models/tiny_face_detector'),
+          faceapi.nets.faceExpressionNet.loadFromUri('/models/face_expression'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('/models/face_landmark_68')
         ]);
         
         setModelsLoaded(true);
