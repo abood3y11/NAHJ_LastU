@@ -53,7 +53,7 @@ const SimpleFacialTracker: React.FC<SimpleFacialTrackerProps> = ({
         setError(null);
         
         // Load from CDN instead of local files
-        const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+        const MODEL_URL = '/models';
         
         // Load the required models
         await Promise.all([
