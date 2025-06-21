@@ -11,7 +11,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="max-w-md w-full p-8">
         <div className="text-center mb-10">
           <img 
-            src="/nahj-logo.png" 
+            src="https://logo.com/image-cdn/images/kts928pd/production/88683355c0c634d79d7c2a943ed71c104e08d6b7-800x800.webp?w=512&q=70&fm=webp" 
             alt="SmartMentor نهج"
             className="h-25 mx-auto mb-4"
           />
